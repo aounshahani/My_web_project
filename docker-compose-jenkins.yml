@@ -1,0 +1,27 @@
+# docker-compose-jenkins.yml
+version: '3.8'
+services:
+  jenkins_db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: mydb
+    volumes:
+      - db_data:/var/lib/mysql
+    # Different container name and port
+    ports:
+      - "3307:3306" # Changed from default 3306 to avoid conflict
+
+  jenkins_web:
+    # Use the image from Docker Hub OR mount local code
+    image: aounshahani/my_web_app:latest # Pushed image
+    # Alternative: mount code as a volume (as assignment suggests)
+    # build: .
+    # volumes:
+    #   - ./app.py:/app/app.py  # Attach volume for code
+    ports:
+      - "8080:5000"  # Different external port
+    depends_on:
+      - jenkins_db
+volumes:
+  db_data:
